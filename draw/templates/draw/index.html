@@ -78,12 +78,26 @@
     
     peopleArray[randomIndex] = new paper.Path();
     
+    var passFlag = "["+ randomIndex + ',' + -1 + "]";
+    console.log(passFlag);
+    socket.send(passFlag);
+    
+    //on mouse Up send a thing to the other arrays, and make sure the new piece is cleared.
+    
   }
   
     socket.onmessage = function(data) {
       var c = JSON.parse(data.data);
+      
+      
+      
       console.log(count);
       console.log(data.data);
+      
+      if (c[1] == -1) {
+        peopleArray[c[0]] = new paper.Path();
+        return;
+      }
       
       //console.log(publicPath.segments);
       
@@ -91,7 +105,10 @@
         peopleArray[c[4]] = new paper.Path();
         peopleArray[c[4]].strokeColor = 'white';
         
-        count = count + 1;
+        
+      }
+      else if (count == 1) {
+        peopleArray[c[4]].removeSegment(peopleArray[c[4]].segments.length -1);
       }
       else if (count > 1) {
         //var c = JSON.parse(data.data);
@@ -100,7 +117,7 @@
       peopleArray[c[4]].strokeColor = c[3];
       peopleArray[c[4]].add(new paper.Point(c[1],c[2]));
         
-        count = count + 1;
+        
         console.log(count);
         
       }
