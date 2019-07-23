@@ -30,6 +30,31 @@
 
     // var socket = new WebSocket(
     //     'wss://<your url here>/ws/draw');
+  
+    var socket = new WebSocket('wss://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/ws/draw');
+  
+    var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'yellow', 'blue', 'gray']
+    
+    var selfPath = new paper.Path();
+  
+  var 
+  
+  
+    selfPath.strokeColor = 'black'
+  
+  
+    tool.onMouseMove = function(event) {
+      selfPath.add(event.point);
+      //stringify the color, 
+      console.log(JSON.stringify('black'));
+      
+      //here need to send the socket with the whatever item
+      
+    }
+    
+    socket.onmessage = function(data) {
+      
+    }
 
 
 </script>
