@@ -33,26 +33,63 @@
   
     var socket = new WebSocket('wss://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/ws/draw');
   
-    var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'yellow', 'blue', 'gray']
+    var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'blue', 'gray'];
     
     var selfPath = new paper.Path();
+  var publicPath = new paper.Path();
   
-  var 
+  var randomIndex = Math.floor((Math.random() * 10000) % colors.length);
+  console.log(randomIndex);
   
   
-    selfPath.strokeColor = 'black'
+    selfPath.strokeColor = colors[randomIndex];
+    publicPath.strokeColor = colors[randomIndex];
   
   
+  tool.onMouseDown = function(event) {
+    selfPath = new paper.Path();
+    publicPath = new paper.Path();
+    selfPath.strokeColor = colors[randomIndex];
+    selfPath.add(event.point);
+  }
+  
+  
+  tool.onMouseDrag = function(event) {
+    selfPath.add(event.point);
+    
+    //var d = JSON.stringify(event.point + selfPath.strokeColor);
+       var d = JSON.stringify(event.point);
+      d = d.substring(0, d.length -1);
+      d = d + ',"' + colors[randomIndex] + '"]';
+      console.log(d);
+      socket.send(d);
+
+  }
+  
+  tool.onMouseUp = function(event) {
+    
+  }
+  
+  
+    /*
     tool.onMouseMove = function(event) {
       selfPath.add(event.point);
-      //stringify the color, 
-      console.log(JSON.stringify('black'));
-      
-      //here need to send the socket with the whatever item
+      //var d = JSON.stringify(event.point + selfPath.strokeColor);
+       var d = JSON.stringify(event.point);
+      d = d.substring(0, d.length -1);
+      d = d + ',"' + colors[randomIndex] + '"]';
+      console.log(d);
+      socket.send(d);
+   
       
     }
+    */
     
     socket.onmessage = function(data) {
+      var c = JSON.parse(data.data);
+      console.log(c);
+      publicPath.strokeColor = c[3];
+      publicPath.add(new paper.Point(c[1], c[2]));
       
     }
 
