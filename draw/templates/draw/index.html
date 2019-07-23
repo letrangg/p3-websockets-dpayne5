@@ -21,6 +21,10 @@
     <canvas id="myCanvas" width="750px" height="750px"></canvas>
 </body>
 <script>
+  
+  
+  
+  
 
     // setting up the canvas and one paper tool
     var canvas = document.getElementById('myCanvas');
@@ -31,6 +35,7 @@
 
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
+  console.log(url);
 
   
     var socket = new WebSocket('wss://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/ws/draw');
@@ -49,11 +54,24 @@
   var randomIndex = Math.floor((Math.random() * 10000) % colors.length);
     //publicPath.strokeColor = colors[randomIndex];
   
+  
+  //1C implementation here
+  
+  
+  
+  if (url == "https://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/draw/?size-small") {
+    
+    for (i=0; i< peopleArray.length; i++) {
+      if (i != randomIndex) {
+        peopleArray[i].visible = false;
+      }
+    }
+    
+    
+  }
+  
   tool.onMouseDown = function(event) {
-    //count = 0;
-    //publicPath = new paper.Path();
-    //publicPath.strokeColor = 'white';
-   // console.log("we going down");
+    
     peopleArray[randomIndex] = new paper.Path();
     
   }
@@ -122,23 +140,6 @@
         
       }
       
-      
-      /*
-      if (count == 1) {
-        publicPath.removeSegment(publicPath.segments.length -1);
-        publicPath = new paper.Path();
-      }
-      
-      else if (count > 0) {
-        var c = JSON.parse(data.data);
-      publicPath.strokeColor = c[3];
-      publicPath.add(new paper.Point(c[1], c[2]));
-        
-      }
-     
-      count = count + 1;
-      //console.log(count);
-      */
       
       count = count + 1;
       paper.view.draw();
