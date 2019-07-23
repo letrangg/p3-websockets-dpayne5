@@ -42,6 +42,7 @@
     var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'blue', 'gray'];
     
   var publicPath = new paper.Path();
+  var isSmall = false;
   
   
   //array of paths, for the multiple users, 
@@ -60,9 +61,12 @@
   
   
   if (url == "https://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/draw/?size-small") {
+    console.log("small url")
+    isSmall = true;
     
     for (i=0; i< peopleArray.length; i++) {
       if (i != randomIndex) {
+        console.log("setting path visibility to false");
         peopleArray[i].visible = false;
       }
     }
@@ -73,6 +77,13 @@
   tool.onMouseDown = function(event) {
     
     peopleArray[randomIndex] = new paper.Path();
+    
+    //here have to make another socket send to flag if the thing is small
+    
+    var oneCdata = "[" + -2 + "," + randomIndex + "]";
+    console.log(oneCdata);
+    
+    socket.send(oneCdata)
     
   }
   
@@ -107,10 +118,16 @@
     socket.onmessage = function(data) {
       var c = JSON.parse(data.data);
       
-      
-      
       console.log(count);
       console.log(data.data);
+      
+      
+      if (c[0] == -2) {
+        if (isSmall && c[1] != randomIndex) {
+          peopleArray[c[1]].visible = false;
+          
+        }
+      }
       
       if (c[1] == -1) {
         peopleArray[c[0]] = new paper.Path();
