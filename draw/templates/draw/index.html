@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'draw/vendor/bootstrap/css/bootstrap.min.css' %}">
     <script type="text/javascript" src="{% static 'draw/vendor/jquery/jquery-3.3.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'draw/vendor/paper/paper-full.min.js' %}"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/alexgibson/shake.js/master/shake.js"></script>
   
 
     <style type="text/css">
@@ -25,6 +26,8 @@
     var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
     var tool = new paper.Tool();
+  
+  var count = 0;
 
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
@@ -33,66 +36,98 @@
     var socket = new WebSocket('wss://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/ws/draw');
     var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'blue', 'gray'];
     
-    var selfPath = new paper.Path();
   var publicPath = new paper.Path();
   
+  
+  //array of paths, for the multiple users, 
+  var peopleArray = [];
+  
+  for (i = 0; i < colors.length; i++) {
+    peopleArray.push(new paper.Path());
+  }
+  
   var randomIndex = Math.floor((Math.random() * 10000) % colors.length);
-    selfPath.strokeColor = colors[randomIndex];
-    publicPath.strokeColor = colors[randomIndex];
+    //publicPath.strokeColor = colors[randomIndex];
   
   tool.onMouseDown = function(event) {
-    selfPath = new paper.Path();
-    publicPath = new paper.Path();
-    selfPath.strokeColor = colors[randomIndex];
-    selfPath.add(event.point);
-    console.log(selfPath);
+    //count = 0;
+    //publicPath = new paper.Path();
+    //publicPath.strokeColor = 'white';
+   // console.log("we going down");
+    peopleArray[randomIndex] = new paper.Path();
+    
   }
   
   tool.onMouseDrag = function(event) {
-    selfPath.add(event.point);
+   // console.log("dragging");
     
-       var d = JSON.stringify(event.point);
+      var d = JSON.stringify(event.point);
+    //console.log(d);
       d = d.substring(0, d.length -1);
-      d = d + ',"' + colors[randomIndex] + '"]';
+      d = d + ',"' + colors[randomIndex] + '",' + randomIndex +']';
+    console.log(d);
+    
       socket.send(d);
+    
 
   }
   
   tool.onMouseUp = function(event) {
-    selfPath = new paper.Path();
-    publicPath = new paper.Path();
+    //publicPath = new paper.Path();
+    //publicPath.strokeColor = 'white';
+    
+    peopleArray[randomIndex] = new paper.Path();
     
   }
   
     socket.onmessage = function(data) {
       var c = JSON.parse(data.data);
+      console.log(count);
+      console.log(data.data);
+      
+      //console.log(publicPath.segments);
+      
+      if (count == 0) {
+        peopleArray[c[4]] = new paper.Path();
+        peopleArray[c[4]].strokeColor = 'white';
+        
+        count = count + 1;
+      }
+      else if (count > 1) {
+        //var c = JSON.parse(data.data);
+      console.log(c);
+        console.log(c[4], c[3]);
+      peopleArray[c[4]].strokeColor = c[3];
+      peopleArray[c[4]].add(new paper.Point(c[1],c[2]));
+        
+        count = count + 1;
+        console.log(count);
+        
+      }
+      
+      
+      /*
+      if (count == 1) {
+        publicPath.removeSegment(publicPath.segments.length -1);
+        publicPath = new paper.Path();
+      }
+      
+      else if (count > 0) {
+        var c = JSON.parse(data.data);
       publicPath.strokeColor = c[3];
       publicPath.add(new paper.Point(c[1], c[2]));
-      //publicPath = new paper.Path();
+        
+      }
+     
+      count = count + 1;
+      //console.log(count);
+      */
+      
+      count = count + 1;
+      paper.view.draw();
+      
       
     }
-    
-    
-    
-    
-    
-    //task2: 
-     var shakeEvent = new shake.Shake({threshold: 15});
-    shakeEvent.start();
-    window.addEventListener('shake', function(){
-        alert("Shaked");
-    }, false);
-
-    //stop listening
-    function stopShake(){
-        shakeEvent.stop();
-    }
-
-    //check if shake is supported or not.
-    if(!("ondevicemotion" in window)){alert("Not Supported");}
-    
-    
-    
 
 </script>
 </html>
