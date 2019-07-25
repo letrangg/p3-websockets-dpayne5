@@ -13,6 +13,57 @@
   
 
     <style type="text/css">
+      @mixin blockPlug {
+        height: 6px;
+        position: absolute;
+        content: "";
+        display: block;
+        bottom: 100%;
+        width: 16px;
+        background: inherit;
+        z-index: -1;
+        border-radius: 2px 2px 0 0;
+      }
+      @mixin block {
+        width: 80px;
+        height: 36px;
+        position: relative;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        height: 100vh;
+        width: 100vw;
+        display: grid;
+      }
+      .stage {
+        margin: auto;
+      }
+      .row {
+        display: flex;
+      }
+      .space {
+        @include block;
+      }
+      .block {
+        @include block;
+        border-bottom: 2px groove rgba(0,0,0,0.3);
+        & + & {
+          border-left: 2px groove rgba(0,0,0,0.3);
+        }
+        &::before {
+          @include blockPlug;
+          left: 8px;
+        }
+        &::after {
+          @include blockPlug;
+          right: 8px;
+        }
+      }
+      
     </style>
 
 </head>
@@ -21,13 +72,8 @@
     <canvas id="myCanvas" width="750px" height="750px"></canvas>
 </body>
 <script>
-  
-  
-  
-  
-
-    // setting up the canvas and one paper tool
-    var canvas = document.getElementById('myCanvas');
+  // setting up the canvas and one paper tool
+ /*   var canvas = document.getElementById('myCanvas');
     paper.setup(canvas);
     var tool = new paper.Tool();
   
@@ -36,30 +82,18 @@
     // getting the URL (you may want to use for Exercise 3)
     var url = window.location.href;
   console.log(url);
-
-  
     var socket = new WebSocket('wss://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/ws/draw');
     var colors = ['black', 'green', 'red', 'pink', 'orange', 'purple', 'magenta', 'cyan', 'blue', 'gray'];
-    
   var publicPath = new paper.Path();
   var isSmall = false;
-  
-  
   //array of paths, for the multiple users, 
   var peopleArray = [];
-  
   for (i = 0; i < colors.length; i++) {
     peopleArray.push(new paper.Path());
   }
-  
   var randomIndex = Math.floor((Math.random() * 10000) % colors.length);
     //publicPath.strokeColor = colors[randomIndex];
-  
-  
   //1C implementation here
-  
-  
-  
   if (url == "https://p3-websockets-dpayne5-dpayne589733.codeanyapp.com/draw/?size-small") {
     console.log("small url")
     isSmall = true;
@@ -70,8 +104,6 @@
         peopleArray[i].visible = false;
       }
     }
-    
-    
   }
   
   tool.onMouseDown = function(event) {
@@ -139,8 +171,6 @@
       if (count == 0) {
         peopleArray[c[4]] = new paper.Path();
         peopleArray[c[4]].strokeColor = 'white';
-        
-        
       }
       else if (count == 1) {
         peopleArray[c[4]].removeSegment(peopleArray[c[4]].segments.length -1);
@@ -163,6 +193,10 @@
       
       
     }
+    */
+    
+  
+  
 
 </script>
 </html>
